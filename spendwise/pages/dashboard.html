@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — SpendWise</title>
+  <link rel="stylesheet" href="../css/dashboard.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-icon"><i class="fas fa-wallet"></i></div>
+    <span>SpendWise</span>
+  </div>
+
+  <div class="sb-user">
+    <div class="ava" id="ava">A</div>
+    <div>
+      <div class="u-name" id="uName">User</div>
+      <div class="u-email" id="uEmail">user@email.com</div>
+    </div>
+  </div>
+
+  <nav class="sb-nav">
+    <a class="nl active" onclick="go('dashboard')"><i class="fas fa-chart-pie"></i>Dashboard</a>
+    <a class="nl" onclick="go('add')"><i class="fas fa-plus-circle"></i>Add Transaction</a>
+    <a class="nl" onclick="go('txns')"><i class="fas fa-list"></i>Transactions</a>
+    <a class="nl" onclick="go('reports')"><i class="fas fa-chart-bar"></i>Reports</a>
+    <a class="nl" onclick="go('ai')"><i class="fas fa-robot"></i>AI Insights</a>
+  </nav>
+
+  <div class="sb-foot">
+    <a class="nl logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</a>
+  </div>
+</aside>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<main class="main">
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <button class="burger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+    <h2 class="ptitle" id="ptitle">Dashboard</h2>
+    <div class="tb-right">
+      <button class="dark-btn" onclick="toggleDark()" title="Dark/Light"><i class="fas fa-moon" id="dkIco"></i></button>
+      <div class="exp-wrap">
+        <button class="exp-btn" onclick="toggleExpMenu()"><i class="fas fa-download"></i> Export</button>
+        <div class="exp-menu" id="expMenu">
+          <button onclick="exportCSV()"><i class="fas fa-file-csv"></i> CSV</button>
+          <button onclick="exportPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── DASHBOARD ── -->
+  <section class="sec active" id="sec-dashboard">
+    <div class="cards">
+      <div class="card bal">
+        <div class="cico"><i class="fas fa-wallet"></i></div>
+        <div><span class="clbl">Total Balance</span><span class="cval" id="cBal">₹0.00</span></div>
+      </div>
+      <div class="card inc">
+        <div class="cico"><i class="fas fa-arrow-down"></i></div>
+        <div><span class="clbl">Total Income</span><span class="cval" id="cInc">₹0.00</span></div>
+      </div>
+      <div class="card exp">
+        <div class="cico"><i class="fas fa-arrow-up"></i></div>
+        <div><span class="clbl">Total Expenses</span><span class="cval" id="cExp">₹0.00</span></div>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-box"><h3>Category Breakdown</h3><canvas id="pieChart"></canvas></div>
+      <div class="chart-box"><h3>Monthly Overview</h3><canvas id="barChart"></canvas></div>
+    </div>
+
+    <div class="list-box">
+      <div class="lh"><h3>Recent Transactions</h3><button class="btn-link" onclick="go('txns')">View All →</button></div>
+      <div id="recentList" class="tlist"></div>
+    </div>
+  </section>
+
+  <!-- ── ADD TRANSACTION ── -->
+  <section class="sec" id="sec-add">
+    <div class="form-box">
+      <h3 class="fh"><i class="fas fa-plus-circle"></i> Add Transaction</h3>
+
+      <div class="type-tog">
+        <button class="tt active" id="ttExp" onclick="setType('expense')"><i class="fas fa-minus"></i> Expense</button>
+        <button class="tt" id="ttInc" onclick="setType('income')"><i class="fas fa-plus"></i> Income</button>
+      </div>
+
+      <div class="fgrid">
+        <div class="fg"><label>Amount (₹)</label><input type="number" id="fAmt" placeholder="0.00" min="0.01"/></div>
+        <div class="fg"><label>Category</label><select id="fCat"></select></div>
+        <div class="fg"><label>Date</label><input type="date" id="fDate"/></div>
+        <div class="fg fw"><label>Note (optional)</label><input type="text" id="fNote" placeholder="Add a note..."/></div>
+      </div>
+
+      <div id="fMsg" class="fmsg hidden"></div>
+      <button class="btn-main" onclick="addTxn()"><i class="fas fa-save"></i> Save Transaction</button>
+    </div>
+  </section>
+
+  <!-- ── ALL TRANSACTIONS ── -->
+  <section class="sec" id="sec-txns">
+    <div class="filter-bar">
+      <input type="text" id="srch" placeholder="🔍 Search..." oninput="renderFiltered()"/>
+      <select id="fType" onchange="renderFiltered()">
+        <option value="">All Types</option>
+        <option value="income">Income</option>
+        <option value="expense">Expense</option>
+      </select>
+      <select id="fCatF" onchange="renderFiltered()"><option value="">All Categories</option></select>
+      <input type="date" id="fFrom" onchange="renderFiltered()"/>
+      <input type="date" id="fTo" onchange="renderFiltered()"/>
+      <button class="btn-out" onclick="clearF()">Clear</button>
+    </div>
+    <div id="allList" class="tlist"></div>
+  </section>
+
+  <!-- ── REPORTS ── -->
+  <section class="sec" id="sec-reports">
+    <div class="chart-box fw"><h3>Yearly Trend (Income vs Expense)</h3><canvas id="trendChart"></canvas></div>
+    <div class="chart-box" style="margin-top:1.5rem"><h3>Category Wise Expense</h3><canvas id="repPie"></canvas></div>
+  </section>
+
+  <!-- ── AI INSIGHTS ── -->
+  <section class="sec" id="sec-ai">
+    <div class="ai-head">
+      <div class="ai-ava"><i class="fas fa-robot"></i></div>
+      <div><h2>AI Spending Insights</h2><p>Smart analysis of your habits</p></div>
+    </div>
+    <div id="insGrid" class="ins-grid"></div>
+    <div id="tipsBox" class="tips-box" style="display:none">
+      <h3><i class="fas fa-lightbulb"></i> Smart Tips</h3>
+      <ul id="tipsList"></ul>
+    </div>
+    <div id="predBox" class="pred-box" style="display:none">
+      <h3><i class="fas fa-chart-line"></i> Month-End Prediction</h3>
+      <p id="predTxt"></p>
+    </div>
+  </section>
+
+</main>
+
+<!-- Edit Modal -->
+<div class="modal-ov" id="editModal">
+  <div class="modal">
+    <div class="mh"><h3>Edit Transaction</h3><button onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="mb">
+      <div class="type-tog">
+        <button class="tt active" id="etExp" onclick="setEType('expense')"><i class="fas fa-minus"></i> Expense</button>
+        <button class="tt" id="etInc" onclick="setEType('income')"><i class="fas fa-plus"></i> Income</button>
+      </div>
+      <div class="fgrid">
+        <div class="fg"><label>Amount (₹)</label><input type="number" id="eAmt"/></div>
+        <div class="fg"><label>Category</label><select id="eCat"></select></div>
+        <div class="fg"><label>Date</label><input type="date" id="eDate"/></div>
+        <div class="fg fw"><label>Note</label><input type="text" id="eNote"/></div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn-out" onclick="closeModal()">Cancel</button>
+      <button class="btn-main" onclick="saveEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="../js/app.js"></script>
+</body>
+</html>
