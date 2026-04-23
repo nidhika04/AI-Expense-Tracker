@@ -17,7 +17,7 @@ const CAT_ICO  = {
 const CAT_CLR = {
   Food:'#ffb86bb0',Travel:'#ffd93d',Shopping:'#6bcb77',Bills:'#4d96ff',
   Entertainment:'#c77dff',Health:'#06d6a0',Education:'#f4a261',Housing:'#e76f51',
-  Savings:'#2ec4b6',Other:'#adb5bd',Salary:'#06d6a0',Freelance:'#4d96ff',
+  Savings:'#2ec46a',Other:'#adb5bd',Salary:'#06d6a0',Freelance:'#4d96ff',
   Business:'#c77dff',Investment:'#ffd93d',Gift:'#ff6b6b','Other Income':'#6bcb77'
 };
 
