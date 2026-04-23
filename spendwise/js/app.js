@@ -12,6 +12,8 @@ const CAT_ICO  = {
   Health:'💊',Education:'📚',Housing:'🏠',Savings:'💰',Other:'📌',
   Salary:'💼',Freelance:'💻',Business:'📈',Investment:'📊',Gift:'🎁','Other Income':'💵'
 };
+//colors
+
 const CAT_CLR = {
   Food:'#ffb86bb0',Travel:'#ffd93d',Shopping:'#6bcb77',Bills:'#4d96ff',
   Entertainment:'#c77dff',Health:'#06d6a0',Education:'#f4a261',Housing:'#e76f51',
