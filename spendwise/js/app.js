@@ -133,7 +133,7 @@ function fmtDate(ds) {
 }
 
 // ═══════════════════════════════════════════
-//  ADD TRANSACTION
+//   TRANSACTION ADD
 // ═══════════════════════════════════════════
 function setType(t) {
   addType = t;
