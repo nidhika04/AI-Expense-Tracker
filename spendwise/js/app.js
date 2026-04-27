@@ -193,7 +193,7 @@ function showFMsg(msg, type) {
 }
 
 // ═══════════════════════════════════════════
-//  EDIT TRANSACTION
+//   TRANSACTION EDIT
 // ═══════════════════════════════════════════
 function openEdit(id) {
   const t = txns.find(x=>x.id===id);
