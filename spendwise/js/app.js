@@ -174,7 +174,7 @@ function addTxn() {
   txns.unshift(t);
   saveTxns();
 
-  // Reset form
+  //  form reset
   document.getElementById('fAmt').value  = '';
   document.getElementById('fNote').value = '';
   document.getElementById('fDate').valueAsDate = new Date();
