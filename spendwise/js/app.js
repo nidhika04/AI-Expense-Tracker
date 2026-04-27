@@ -251,7 +251,7 @@ function delTxn(id) {
 }
 
 // ═══════════════════════════════════════════
-//  FILTER & SEARCH
+//   SEARCH & FILTER
 // ═══════════════════════════════════════════
 function renderFiltered() {
   const srch = document.getElementById('srch').value.toLowerCase();
